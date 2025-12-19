@@ -1,0 +1,42 @@
+# image: docker:20.10.12
+image: node:16-alpine
+services:
+  - name: docker:20.10.12-dind
+
+stages:
+  - deploy
+
+deploy_preview:
+  stage: deploy
+  except:
+    - main
+  variables:
+    VERCEL_TOKEN: $VERCEL_TOKEN
+    NPM_RC: $NPM_RC
+    CI_JOB_TOKEN: $CI_JOB_TOKEN
+  script:
+    - echo $NPM_RC >> .npmrc
+    - yarn global add vercel
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN --scope dev-steppelink
+    - vercel build --token=$VERCEL_TOKEN --scope dev-steppelink
+    - vercel deploy --prebuilt  --token=$VERCEL_TOKEN --scope dev-steppelink
+
+  tags:
+    - docker
+
+deploy_production:
+  stage: deploy
+  only:
+    - main
+  variables:
+    VERCEL_TOKEN: $VERCEL_TOKEN
+    NPM_RC: $NPM_RC
+    CI_JOB_TOKEN: $CI_JOB_TOKEN
+  script:
+    - echo $NPM_RC >> .npmrc
+    - yarn global add vercel
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN --scope dev-steppelink
+    - vercel build --prod --token=$VERCEL_TOKEN --scope dev-steppelink
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN --scope dev-steppelink
+  tags:
+    - docker
