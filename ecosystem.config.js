@@ -6,12 +6,12 @@ module.exports = {
       args: 'start',
       exec_mode: 'fork',
       autorestart: true,
-      watch: false
+      watch: false,
     },
   ],
   deploy: {
     prod: {
-      user: 'ubuntu',
+      user: 'webmaster',
       host: '202.131.236.60',
       ref: 'origin/main',
       key: '~/.ssh/id_ed25519',
@@ -20,7 +20,7 @@ module.exports = {
       'pre-setup':
         'sudo mkdir -p /opt/regsys-frontend && sudo chown ubuntu:ubuntu /opt/regsys-frontend',
       'post-deploy':
-        'npm i && ln -sf /opt/regsys-frontend/envs/prod.env ./.env && npm run build && pm2 reload ecosystem.config.cjs'
+        'npm i && ln -sf /opt/regsys-frontend/envs/prod.env ./.env && npm run build && pm2 reload ecosystem.config.cjs',
     },
-  }
+  },
 }
